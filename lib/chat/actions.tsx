@@ -35,7 +35,7 @@ import { saveChat } from '@/app/actions'
 import { SpinnerMessage, UserMessage } from '@/components/stocks/message'
 import { Chat } from '@/lib/types'
 import { auth } from '@/auth'
-
+import axios from 'axios'
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || ''
@@ -124,8 +124,12 @@ async function confirmPurchase(symbol: string, price: number, amount: number) {
 
 async function submitUserMessage(content: string) {
   'use server'
-  
 
+  const similar = await axios.post('http://localhost:3005/getSimilarity', {
+    email: 'hasnain@gmail.com',
+    message: content
+  })
+  console.log(similar.data.concatenatedPageContent, 'similar')
   const aiState = getMutableAIState<typeof AI>()
 
   aiState.update({

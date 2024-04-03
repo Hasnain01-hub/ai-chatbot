@@ -9,15 +9,11 @@ import { IconShare } from '@/components/ui/icons'
 import { FooterText } from '@/components/footer'
 import { ChatShareDialog } from '@/components/chat-share-dialog'
 import { useAIState, useActions, useUIState } from 'ai/rsc'
-import { OpenAIEmbeddings } from "langchain/embeddings/openai";
+// import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
 import type { AI } from '@/lib/chat/actions'
-import { Chroma } from 'langchain/vectorstores/chroma'
 import { nanoid } from 'nanoid'
 import { UserMessage } from './stocks/message'
 // import PdfToText from './pdf-parse'
-// import {  } from 'chromadb'
-// const { HuggingFaceEmbeddingServerFunction } = require('chromadb')
-
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 import axios from 'axios'
 // const embedder = new HuggingFaceEmbeddingServerFunction({
@@ -132,30 +128,21 @@ export function ChatPanel({
         console.log(text)
         // if (!text) return
         // const output = await splitter.createDocuments([text])
-
-        // const embeddings = await embedder.generate(
-        //   )
-        const texts: any[] = text.map(chunk =>
-          chunk.pageContent.replace(/\n/g, ' ')
-        )
-        const embeddings = await axios.post(
-          api_url,
-          {
-            inputs: texts,
-            options: { wait_for_model: true }
-          },
-          {
-            headers: headers
-          }
-        )
-        const vectorStore = await Chroma.fromDocuments(texts, new OpenAIEmbeddings(),, {
-          collectionName: 'a-test-collection',
-          url: 'http://localhost:8000', // Optional, will default to this value
-          collectionMetadata: {
-            'hnsw:space': 'cosine'
-          } // Optional, can be used to specify the distance method of the embedding space https://docs.trychroma.com/usage-guide#changing-the-distance-function
+        axios.post('http://localhost:3005/set_file_to_pinecone', {
+          email: 'hasnain@gmail.com',
+          combinedContent: text
         })
-        console.log('embeddings', embeddings.data)
+
+        // const embeddings: Embedding[] = await axios.post(
+        //   api_url,
+        //   {
+        //     inputs: texts,
+        //     options: { wait_for_model: true }
+        //   },
+        //   {
+        //     headers: headers
+        //   }
+        // )
       })
     }
   }
@@ -235,7 +222,7 @@ export function ChatPanel({
           <PromptForm
             input={input}
             setInput={setInput}
-            handlefile={uploadtoChroma}
+            uploadtoChroma={uploadtoChroma}
             inputFile={inputFile}
           />
           <FooterText className="hidden sm:block" />
